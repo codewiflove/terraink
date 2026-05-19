@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perhentian Gateway — Souvenir Collection</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&family=Playfair+Display:wght@400;700;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0f; color: #fff; font-family: 'Inter', sans-serif; padding: 50px 40px; }
+
+  h1 { font-size: 28px; font-weight: 800; letter-spacing: 1px; margin-bottom: 4px; font-family: 'Playfair Display', serif; }
+  h1 .gold { color: #c9a84c; }
+  .sub { color: rgba(255,255,255,0.2); margin-bottom: 40px; font-size: 13px; letter-spacing: 2px; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 40px; }
+
+  .card {
+    background: #0f1218; border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 10px; overflow: hidden;
+    transition: all 0.3s; display: flex; flex-direction: column;
+    text-decoration: none; color: #fff;
+  }
+  .card:hover { border-color: rgba(201,168,76,0.2); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+
+  .preview {
+    height: 180px; display: flex; align-items: center; justify-content: center;
+    font-size: 48px; position: relative; overflow: hidden;
+  }
+  .p1 { background: linear-gradient(135deg, #0a0a0f, #1a1a2e); }
+  .p2 { background: linear-gradient(135deg, #0a0a0f, #1a0a1e); }
+  .p3 { background: linear-gradient(135deg, #0a0a0f, #0a1a1e); }
+  .preview .badge-num { position: absolute; top: 12px; left: 14px; font-size: 10px; font-weight: 700; color: rgba(201,168,76,0.3); letter-spacing: 2px; font-family: 'Inter', sans-serif; }
+  .preview .price-tag { position: absolute; bottom: 12px; right: 14px; font-size: 8px; padding: 3px 10px; border-radius: 10px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.15); color: #10b981; letter-spacing: 1px; }
+  .preview .mini-contours { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.06; background: repeating-radial-gradient(circle at 50% 50%, transparent 0%, rgba(201,168,76,0.3) 2px, transparent 2px); background-size: 20px 20px; }
+
+  .body-card { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+  .body-card h2 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .body-card .type { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: #c9a84c; margin-bottom: 6px; }
+  .body-card p { font-size: 11px; color: rgba(255,255,255,0.3); line-height: 1.5; flex: 1; }
+  .body-card .tags { margin-top: 10px; display: flex; gap: 4px; flex-wrap: wrap; }
+  .body-card .tags span { font-size: 8px; padding: 2px 8px; border-radius: 3px; background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.2); letter-spacing: 0.5px; }
+
+  .comparison { background: #0f1218; border: 1px solid rgba(255,255,255,0.04); border-radius: 10px; padding: 30px; }
+  .comparison h3 { font-size: 13px; font-weight: 600; margin-bottom: 16px; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
+  .comp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .comp-item { text-align: center; padding: 12px; background: #0a0a0f; border-radius: 6px; }
+  .comp-item .title { font-size: 8px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.15); margin-bottom: 4px; }
+  .comp-item .rating { font-size: 18px; font-weight: 800; }
+  .gold-r { color: #c9a84c; } .green-r { color: #10b981; } .dim-r { color: rgba(255,255,255,0.1); }
+</style>
+</head>
+<body>
+
+<h1>Perhentian Gateway <span class="gold">✦</span> Souvenir Collection</h1>
+<div class="sub">3 digital souvenirs • RM0 cost • High perceived value • Auto-send</div>
+
+<div class="grid">
+
+  <a class="card" href="idea1-poster.html" target="_blank">
+    <div class="preview p1">
+      <div class="badge-num">01</div>
+      <div class="price-tag">✦ RM0</div>
+      <div class="mini-contours"></div>
+      🗺️
+    </div>
+    <div class="body-card">
+      <div class="type">Premium Topo Poster</div>
+      <h2>Journey Map</h2>
+      <p>Poster A4 dengan topographic contour lines Perhentian, route KB Jetty → resort, nama customer, tarikh. Dark aesthetic — sedia cetak.</p>
+      <div class="tags">
+        <span>Topo Contour</span><span>Personalized</span><span>A4 Ready</span><span>Print-Ready</span>
+      </div>
+    </div>
+  </a>
+
+  <a class="card" href="idea2-captains-log.html" target="_blank">
+    <div class="preview p2">
+      <div class="badge-num">02</div>
+      <div class="price-tag">✦ RM0</div>
+      <div class="mini-contours"></div>
+      📜
+    </div>
+    <div class="body-card">
+      <div class="type">Infographic Card</div>
+      <h2>Captain's Log</h2>
+      <p>Split layout: left = voyage stats (name, vessel, route, distance), right = topo map. IG-ready, shareable. Storytelling format.</p>
+      <div class="tags">
+        <span>Infographic</span><span>Stats</span><span>IG-Ready</span><span>Shareable</span>
+      </div>
+    </div>
+  </a>
+
+  <a class="card" href="idea3-memory-dashboard.html" target="_blank">
+    <div class="preview p3">
+      <div class="badge-num">03</div>
+      <div class="price-tag">✦ RM0</div>
+      <div class="mini-contours"></div>
+      🖥️
+    </div>
+    <div class="body-card">
+      <div class="type">Web Dashboard</div>
+      <h2>Memory Lane</h2>
+      <p>Full dashboard peribadi — animated boat route, upload photo sendiri, download poster. Auto-generate dari booking data.</p>
+      <div class="tags">
+        <span>Animated Route</span><span>Photo Upload</span><span>Dashboard</span><span>Auto-Generate</span>
+      </div>
+    </div>
+  </a>
+
+</div>
+
+<div class="comparison">
+  <h3>📊 Perbandingan</h3>
+  <div class="comp-grid">
+    <div class="comp-item"><div class="title">Viral Potential</div><div class="rating gold-r">1</div></div>
+    <div class="comp-item"><div class="title">Personalization</div><div class="rating gold-r">1 & 3</div></div>
+    <div class="comp-item"><div class="title">Ease to Build</div><div class="rating green-r">1 → 2 → 3</div></div>
+    <div class="comp-item"><div class="title">Cost</div><div class="rating green-r">RM0</div></div>
+    <div class="comp-item"><div class="title">BesutJetty Copy?</div><div class="rating dim-r">✕</div></div>
+  </div>
+</div>
+
+<div style="margin-top:30px; text-align:center; color:rgba(255,255,255,0.06); font-size:10px; letter-spacing:3px;">
+  perhentianboat.com • Perhentian Gateway Services
+</div>
+
+</body>
+</html>

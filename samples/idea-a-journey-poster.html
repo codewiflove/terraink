@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perhentian Journey Map — Perhentian Gateway</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0f172a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    padding: 40px;
+  }
+
+  .poster {
+    width: 595px;
+    min-height: 842px;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    border-radius: 4px;
+  }
+
+  /* ── MAP SECTION ── */
+  .map-area {
+    width: 100%;
+    height: 520px;
+    position: relative;
+    background: linear-gradient(180deg, #0c4a6e 0%, #0f172a 50%, #0c4a6e 100%);
+    overflow: hidden;
+  }
+
+  /* Ocean texture dots */
+  .ocean-dots {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .map-svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Dark overlay gradient at bottom */
+  .map-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to top, rgba(15,23,42,0.95), transparent);
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  /* Branding on map */
+  .branding {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    z-index: 4;
+    text-align: right;
+  }
+
+  .branding .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    letter-spacing: 1px;
+  }
+
+  .branding .logo-sub {
+    font-size: 8px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+  }
+
+  /* Route label on map */
+  .route-label-overlay {
+    position: absolute;
+    bottom: 28px;
+    left: 28px;
+    z-index: 4;
+  }
+
+  .route-label-overlay .r-title {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 3px;
+  }
+
+  .route-label-overlay .r-path {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+
+  .route-label-overlay .r-path .arr { color: #f59e0b; margin: 0 6px; }
+
+  /* Badge */
+  .badge-4 {
+    position: absolute;
+    bottom: 100px;
+    right: 22px;
+    z-index: 4;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  /* ── CONTENT SECTION ── */
+  .content-area {
+    background: #0f172a;
+    color: #fff;
+    padding: 28px 35px 30px;
+    position: relative;
+  }
+
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 48px;
+    line-height: 1;
+    color: #fff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .hero-name .accent { color: #f59e0b; }
+
+  .subtitle {
+    font-size: 12px;
+    font-weight: 300;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 18px;
+  }
+
+  .journey-details {
+    display: flex;
+    gap: 24px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .detail-item { flex: 1; }
+
+  .detail-item .label {
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #64748b;
+    margin-bottom: 2px;
+  }
+
+  .detail-item .value {
+    font-size: 12px;
+    font-weight: 600;
+    color: #e2e8f0;
+  }
+
+  .watermark-bg {
+    position: absolute;
+    bottom: 80px;
+    right: -20px;
+    font-size: 110px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.03);
+    font-family: 'Playfair Display', serif;
+    pointer-events: none;
+    transform: rotate(-5deg);
+  }
+
+  /* ── CONTROLS ── */
+  .controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .controls input, .controls select {
+    padding: 8px 14px;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    background: #1e293b;
+    color: #fff;
+    font-size: 13px;
+  }
+
+  .controls input::placeholder { color: #475569; }
+
+  .controls button {
+    padding: 8px 20px;
+    background: #f59e0b;
+    color: #0f172a;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+  }
+
+  .controls button:hover { background: #d97706; }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .poster { box-shadow: none; border-radius: 0; }
+    .controls { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="poster" id="poster">
+  <!-- MAP SECTION -->
+  <div class="map-area">
+    <div class="ocean-dots"></div>
+
+    <!-- SVG Map of Perhentian Islands -->
+    <svg class="map-svg" viewBox="0 0 600 520" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- Grid lines -->
+      <g stroke="rgba(255,255,255,0.04)" stroke-width="0.5">
+        <line x1="0" y1="100" x2="600" y2="100"/>
+        <line x1="0" y1="200" x2="600" y2="200"/>
+        <line x1="0" y1="300" x2="600" y2="300"/>
+        <line x1="0" y1="400" x2="600" y2="400"/>
+        <line x1="150" y1="0" x2="150" y2="520"/>
+        <line x1="300" y1="0" x2="300" y2="520"/>
+        <line x1="450" y1="0" x2="450" y2="520"/>
+      </g>
+
+      <!-- Mainland Malaysia (Terengganu coast) -->
+      <path d="M 0,480 Q 40,460 80,450 Q 120,440 160,430 Q 180,425 200,420 Q 220,415 240,410 L 240,520 L 0,520 Z"
+            fill="#1e293b" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+      <!-- Label: Terengganu Coast -->
+      <text x="100" y="490" fill="rgba(255,255,255,0.15)" font-size="10" font-family="Inter, sans-serif" letter-spacing="2">TERENGGANU COAST</text>
+
+      <!-- Perhentian Besar (main island) -->
+      <g transform="translate(310, 175)">
+        <ellipse cx="60" cy="55" rx="55" ry="40" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.3"/>
+        <ellipse cx="60" cy="55" rx="45" ry="32" fill="#1e4a6f" stroke="#38bdf8" stroke-width="0.5" stroke-opacity="0.2"/>
+        <!-- Beach markers -->
+        <ellipse cx="30" cy="70" rx="12" ry="4" fill="#d4a574" opacity="0.3"/>
+        <ellipse cx="80" cy="85" rx="10" ry="3" fill="#d4a574" opacity="0.3"/>
+        <text x="48" y="20" fill="rgba(255,255,255,0.5)" font-size="8" font-family="Inter, sans-serif">
+          Perhentian<tspan x="53" dy="10">Besar</tspan>
+        </text>
+      </g>
+
+      <!-- Perhentian Kecil (second island) -->
+      <g transform="translate(400, 140)">
+        <ellipse cx="30" cy="40" rx="35" ry="28" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.3"/>
+        <ellipse cx="30" cy="40" rx="28" ry="22" fill="#1e4a6f" stroke="#38bdf8" stroke-width="0.5" stroke-opacity="0.2"/>
+        <!-- Coral Bay area -->
+        <ellipse cx="50" cy="55" rx="8" ry="3" fill="#d4a574" opacity="0.3"/>
+        <!-- Long Beach area -->
+        <ellipse cx="20" cy="55" rx="6" ry="3" fill="#d4a574" opacity="0.3"/>
+        <text x="15" y="12" fill="rgba(255,255,255,0.5)" font-size="8" font-family="Inter, sans-serif">
+          Perhentian<tspan x="20" dy="10">Kecil</tspan>
+        </text>
+      </g>
+
+      <!-- Redang Island (smaller, reference) -->
+      <g transform="translate(500, 280)" opacity="0.4">
+        <ellipse cx="20" cy="15" rx="18" ry="12" fill="#1e3a5f" stroke="#38bdf8" stroke-width="0.5" stroke-opacity="0.2"/>
+        <text x="8" y="0" fill="rgba(255,255,255,0.2)" font-size="6" font-family="Inter, sans-serif">Redang</text>
+      </g>
+
+      <!-- Depth contour lines around Perhentian -->
+      <ellipse cx="370" cy="215" rx="120" ry="90" fill="none" stroke="rgba(56,189,248,0.06)" stroke-width="0.5" stroke-dasharray="4,6"/>
+      <ellipse cx="370" cy="215" rx="150" ry="115" fill="none" stroke="rgba(56,189,248,0.04)" stroke-width="0.5" stroke-dasharray="4,6"/>
+
+      <!-- KL marker / Label -->
+      <g>
+        <circle cx="50" cy="400" r="3" fill="#f59e0b"/>
+        <circle cx="50" cy="400" r="6" fill="none" stroke="#f59e0b" stroke-width="1" opacity="0.4"/>
+        <text x="65" y="403" fill="rgba(255,255,255,0.3)" font-size="7" font-family="Inter, sans-serif">Kuala Lumpur</text>
+      </g>
+
+      <!-- Kota Bharu Airport KBR -->
+      <g>
+        <circle cx="120" cy="290" r="3" fill="#a78bfa"/>
+        <circle cx="120" cy="290" r="6" fill="none" stroke="#a78bfa" stroke-width="1" opacity="0.4"/>
+        <text x="138" y="293" fill="rgba(255,255,255,0.3)" font-size="7" font-family="Inter, sans-serif">KBR Airport</text>
+      </g>
+
+      <!-- Kuala Besut Jetty - ORIGIN marker -->
+      <g>
+        <circle cx="115" cy="320" r="5" fill="#f59e0b"/>
+        <circle cx="115" cy="320" r="10" fill="none" stroke="#f59e0b" stroke-width="1.5" opacity="0.5"/>
+        <text x="132" y="323" fill="#f59e0b" font-size="8" font-weight="600" font-family="Inter, sans-serif">Kuala Besut Jetty</text>
+        <text x="132" y="333" fill="rgba(255,255,255,0.25)" font-size="6" font-family="Inter, sans-serif">⛴︎ Departure Point</text>
+      </g>
+
+      <!-- Route line: Kuala Besut Jetty → Perhentian Kecil -->
+      <path d="M 115,320 Q 200,290 280,240 Q 340,210 415,185"
+            fill="none" stroke="#f59e0b" stroke-width="2" stroke-opacity="0.7" stroke-dasharray="5,3"/>
+
+      <!-- Arrow at end of route -->
+      <polygon points="415,185 405,180 408,192" fill="#f59e0b" opacity="0.8"/>
+
+      <!-- Waypoint dots on route -->
+      <circle cx="200" cy="290" r="2" fill="#f59e0b" opacity="0.4"/>
+      <circle cx="280" cy="240" r="2" fill="#f59e0b" opacity="0.4"/>
+      <circle cx="340" cy="210" r="2" fill="#f59e0b" opacity="0.4"/>
+
+      <!-- DESTINATION marker: Coral Bay, Perhentian Kecil -->
+      <g>
+        <circle cx="420" cy="188" r="5" fill="#10b981"/>
+        <circle cx="420" cy="188" r="10" fill="none" stroke="#10b981" stroke-width="1.5" opacity="0.5"/>
+        <text x="438" y="191" fill="#10b981" font-size="8" font-weight="600" font-family="Inter, sans-serif">Coral Bay 🏝️</text>
+        <text x="438" y="201" fill="rgba(255,255,255,0.25)" font-size="6" font-family="Inter, sans-serif">Perhentian Kecil</text>
+      </g>
+
+      <!-- Wind rose / compass -->
+      <g transform="translate(555, 50)" opacity="0.3">
+        <circle cx="0" cy="0" r="18" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+        <text x="0" y="-22" fill="rgba(255,255,255,0.3)" font-size="7" text-anchor="middle" font-family="Inter, sans-serif">N</text>
+        <line x1="0" y1="-15" x2="0" y2="15" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+        <line x1="-15" y1="0" x2="15" y2="0" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+      </g>
+
+      <!-- Coordinates -->
+      <text x="15" y="515" fill="rgba(255,255,255,0.15)" font-size="7" font-family="monospace">5°54' N / 102°45' E</text>
+
+    </svg>
+
+    <div class="map-overlay"></div>
+
+    <!-- Branding on map -->
+    <div class="branding">
+      <div class="logo-text">Perhentian Gateway</div>
+      <div class="logo-sub">Boat Services</div>
+    </div>
+
+    <!-- Route info -->
+    <div class="route-label-overlay">
+      <div class="r-title">Your Route</div>
+      <div class="r-path">
+        Kuala Besut Jetty <span class="arr">⟶</span> Coral Bay
+      </div>
+    </div>
+
+    <div class="badge-4">★ 4.9 Rated • 35 min</div>
+  </div>
+
+  <!-- CONTENT SECTION -->
+  <div class="content-area">
+    <div class="hero-name" id="customerName">AYA <span class="accent">CHADI</span></div>
+    <div class="subtitle">Your Perhentian Islands Journey</div>
+
+    <div class="journey-details">
+      <div class="detail-item">
+        <div class="label">Travel Date</div>
+        <div class="value" id="travelDate">March 15, 2026</div>
+      </div>
+      <div class="detail-item">
+        <div class="label">Route</div>
+        <div class="value">Kuala Besut → Coral Bay</div>
+      </div>
+      <div class="detail-item">
+        <div class="label">Duration</div>
+        <div class="value">Speedboat • 35 mins</div>
+      </div>
+      <div class="detail-item">
+        <div class="label">Booking Ref</div>
+        <div class="value" id="bookingRef">PG-2026-001</div>
+      </div>
+    </div>
+
+    <div class="watermark-bg">PG</div>
+  </div>
+</div>
+
+<div class="controls">
+  <input type="text" id="nameInput" placeholder="Customer name" value="AYA CHADI">
+  <input type="text" id="dateInput" placeholder="Date" value="March 15, 2026">
+  <input type="text" id="refInput" placeholder="Booking ref" value="PG-2026-001">
+  <select id="routeSelect">
+    <option value="Coral Bay">Coral Bay (Perhentian Kecil)</option>
+    <option value="Long Beach">Long Beach (Perhentian Kecil)</option>
+    <option value="Perhentian Besar">Perhentian Besar</option>
+    <option value="Mimpi Resort">Mimpi Resort</option>
+    <option value="Marriott Resort">Marriott Resort</option>
+  </select>
+  <button onclick="updatePoster()">🎨 Update Poster</button>
+</div>
+
+<script>
+  function updatePoster() {
+    const name = document.getElementById('nameInput').value.toUpperCase() || 'TRAVELER';
+    const date = document.getElementById('dateInput').value || 'March 15, 2026';
+    const ref = document.getElementById('refInput').value || 'PG-000';
+    const route = document.getElementById('routeSelect').value;
+
+    document.getElementById('customerName').innerHTML = name + ' <span class="accent">CHADI</span>'.replace('CHADI', name.split(' ').slice(-1)[0] || '');
+    document.getElementById('travelDate').textContent = date;
+    document.getElementById('bookingRef').textContent = ref;
+    document.querySelector('.route-label-overlay .r-path').innerHTML = 'Kuala Besut Jetty <span class="arr">⟶</span> ' + route;
+  }
+</script>
+
+</body>
+</html>

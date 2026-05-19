@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Captain's Log — Perhentian Gateway</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@200;300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .card {
+    width: 700px;
+    height: 400px;
+    background: #0f1218;
+    display: flex;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    border-radius: 3px;
+    position: relative;
+  }
+
+  /* Divider line between left and right */
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 55%;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.15), rgba(201,168,76,0.2), rgba(201,168,76,0.15), transparent);
+  }
+
+  /* ── LEFT SIDE: STATS ── */
+  .left-panel {
+    width: 55%;
+    padding: 36px 32px 28px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .left-panel .brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.2);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .left-panel .brand .dot {
+    display: inline-block;
+    width: 3px; height: 3px;
+    background: #c9a84c;
+    border-radius: 50%;
+    margin: 0 5px;
+    vertical-align: middle;
+  }
+
+  .left-panel .section-title {
+    font-size: 7px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(201,168,76,0.4);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+
+  .log-entry {
+    flex: 1;
+  }
+
+  .log-row {
+    display: flex;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .log-row:last-child { border-bottom: none; }
+
+  .log-row .log-label {
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.25);
+    width: 100px;
+    flex-shrink: 0;
+  }
+
+  .log-row .log-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: 1px;
+  }
+
+  .log-row .log-value.accent { color: #c9a84c; }
+  .log-row .log-value.green { color: #10b981; }
+  .log-row .log-value.mono { font-family: 'SF Mono', monospace; font-size: 13px; font-weight: 400; color: rgba(255,255,255,0.5); }
+
+  .log-row .log-sub {
+    font-size: 9px;
+    color: rgba(255,255,255,0.2);
+    margin-left: 8px;
+  }
+
+  .log-row .airport-tag {
+    font-size: 7px;
+    padding: 2px 6px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 3px;
+    color: #c9a84c;
+    margin-left: 6px;
+  }
+
+  /* Bottom quote */
+  .left-panel .quote {
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    font-size: 10px;
+    font-style: italic;
+    color: rgba(255,255,255,0.2);
+    line-height: 1.5;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .left-panel .quote .em {
+    color: rgba(255,255,255,0.4);
+  }
+
+  /* ── RIGHT SIDE: MAP ── */
+  .right-panel {
+    width: 45%;
+    position: relative;
+    background: #0a0a0f;
+    overflow: hidden;
+  }
+
+  .right-panel .map-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Watermark right panel */
+  .right-panel .watermark {
+    position: absolute;
+    bottom: 16px;
+    right: 18px;
+    font-size: 7px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.08);
+    text-transform: uppercase;
+  }
+
+  /* Controls */
+  .controls {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 700px;
+  }
+
+  .controls input, .controls select {
+    padding: 8px 14px;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    background: #0f1218;
+    color: #e2e8f0;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .controls button {
+    padding: 8px 20px;
+    background: #c9a84c;
+    color: #0a0a0f;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .controls button:hover { background: #d4b85a; }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .card { box-shadow: none; }
+    .controls { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <!-- LEFT PANEL: Captain's Log -->
+  <div class="left-panel">
+    <div class="brand"><span class="dot"></span> PERHENTIAN GATEWAY</div>
+    <div class="section-title">⛵ Captain's Log — Voyage Record</div>
+
+    <div class="log-entry">
+      <div class="log-row">
+        <div class="log-label">Passenger</div>
+        <div class="log-value accent" id="logName">Muhammad Ihsan & Family</div>
+      </div>
+      <div class="log-row">
+        <div class="log-label">Vessel</div>
+        <div class="log-value" id="logVessel">PerhentianBoat Express 04</div>
+      </div>
+      <div class="log-row">
+        <div class="log-label">Route</div>
+        <div class="log-value" id="logRoute">Kuala Besut ➔ Coral Bay</div>
+        <div class="log-sub">21 NM</div>
+      </div>
+      <div class="log-row">
+        <div class="log-label">Crossing</div>
+        <div class="log-value green" id="logDate">14 May 2026</div>
+        <div class="log-sub">35 min</div>
+      </div>
+      <div class="log-row">
+        <div class="log-label">Coordinates</div>
+        <div class="log-value mono">5.9100° N, 102.7472° E</div>
+      </div>
+      <div class="log-row">
+        <div class="log-label">Flight</div>
+        <div class="log-value mono">KBR ✈</div>
+        <div class="airport-tag">Airport Transfer</div>
+      </div>
+    </div>
+
+    <div class="quote">
+      "<span class="em">The sea, once it casts its spell, holds one in its net of wonder forever.</span>"
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Topo Map -->
+  <div class="right-panel">
+    <svg class="map-svg" viewBox="0 0 315 400" xmlns="http://www.w3.org/2000/svg">
+      <!-- Background -->
+      <rect x="0" y="0" width="315" height="400" fill="#0a0a0f"/>
+
+      <!-- Grid -->
+      <g stroke="rgba(255,255,255,0.015)" stroke-width="0.3">
+        <line x1="0" y1="50" x2="315" y2="50"/>
+        <line x1="0" y1="100" x2="315" y2="100"/>
+        <line x1="0" y1="150" x2="315" y2="150"/>
+        <line x1="0" y1="200" x2="315" y2="200"/>
+        <line x1="0" y1="250" x2="315" y2="250"/>
+        <line x1="0" y1="300" x2="315" y2="300"/>
+        <line x1="0" y1="350" x2="315" y2="350"/>
+        <line x1="50" y1="0" x2="50" y2="400"/>
+        <line x1="100" y1="0" x2="100" y2="400"/>
+        <line x1="150" y1="0" x2="150" y2="400"/>
+        <line x1="200" y1="0" x2="200" y2="400"/>
+        <line x1="250" y1="0" x2="250" y2="400"/>
+      </g>
+
+      <!-- Outer contours -->
+      <ellipse cx="170" cy="180" rx="110" ry="85" fill="none" stroke="rgba(201,168,76,0.04)" stroke-width="0.4"/>
+      <ellipse cx="170" cy="180" rx="100" ry="78" fill="none" stroke="rgba(201,168,76,0.05)" stroke-width="0.4"/>
+      <ellipse cx="170" cy="180" rx="90" ry="70" fill="none" stroke="rgba(201,168,76,0.06)" stroke-width="0.4"/>
+      <ellipse cx="170" cy="180" rx="80" ry="62" fill="none" stroke="rgba(201,168,76,0.07)" stroke-width="0.4"/>
+
+      <!-- Perhentian Besar contours -->
+      <ellipse cx="155" cy="170" rx="40" ry="32" fill="none" stroke="rgba(201,168,76,0.12)" stroke-width="0.5"/>
+      <ellipse cx="155" cy="170" rx="35" ry="28" fill="none" stroke="rgba(201,168,76,0.15)" stroke-width="0.5"/>
+      <ellipse cx="155" cy="170" rx="30" ry="24" fill="none" stroke="rgba(201,168,76,0.18)" stroke-width="0.5"/>
+      <ellipse cx="155" cy="170" rx="25" ry="20" fill="none" stroke="rgba(201,168,76,0.22)" stroke-width="0.5"/>
+      <ellipse cx="155" cy="170" rx="20" ry="16" fill="none" stroke="rgba(201,168,76,0.26)" stroke-width="0.5"/>
+      <ellipse cx="155" cy="170" rx="15" ry="12" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="0.5"/>
+      <ellipse cx="155" cy="170" rx="10" ry="8" fill="rgba(201,168,76,0.04)" stroke="rgba(201,168,76,0.35)" stroke-width="0.5"/>
+
+      <!-- Perhentian Kecil contours -->
+      <ellipse cx="205" cy="135" rx="28" ry="24" fill="none" stroke="rgba(201,168,76,0.12)" stroke-width="0.5"/>
+      <ellipse cx="205" cy="135" rx="24" ry="20" fill="none" stroke="rgba(201,168,76,0.15)" stroke-width="0.5"/>
+      <ellipse cx="205" cy="135" rx="20" ry="17" fill="none" stroke="rgba(201,168,76,0.18)" stroke-width="0.5"/>
+      <ellipse cx="205" cy="135" rx="16" ry="13" fill="none" stroke="rgba(201,168,76,0.22)" stroke-width="0.5"/>
+      <ellipse cx="205" cy="135" rx="12" ry="10" fill="none" stroke="rgba(201,168,76,0.26)" stroke-width="0.5"/>
+      <ellipse cx="205" cy="135" rx="8" ry="6" fill="rgba(201,168,76,0.04)" stroke="rgba(201,168,76,0.3)" stroke-width="0.5"/>
+
+      <!-- KB Jetty -->
+      <circle cx="50" cy="285" r="3" fill="#c9a84c"/>
+      <circle cx="50" cy="285" r="6" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.4"/>
+      <text x="65" y="289" fill="#c9a84c" font-size="6" font-weight="600" font-family="Inter, sans-serif" letter-spacing="1">KB JETTY</text>
+
+      <!-- Coral Bay -->
+      <circle cx="218" cy="148" r="3" fill="#10b981"/>
+      <circle cx="218" cy="148" r="6" fill="none" stroke="#10b981" stroke-width="0.8" opacity="0.4"/>
+      <text x="231" y="152" fill="#10b981" font-size="6" font-weight="600" font-family="Inter, sans-serif" letter-spacing="1">CORAL BAY</text>
+
+      <!-- Route -->
+      <path d="M 50,285 Q 100,250 150,210 Q 180,185 218,148"
+            fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.6" stroke-dasharray="4,3"/>
+      <polygon points="218,148 208,143 210,156" fill="#c9a84c" opacity="0.6"/>
+
+      <!-- Distance label -->
+      <text x="115" y="225" fill="rgba(201,168,76,0.15)" font-size="7" font-family="Inter, sans-serif" transform="rotate(-40, 115, 225)">~21 NM</text>
+
+      <!-- Compass -->
+      <g transform="translate(278, 40)" opacity="0.15">
+        <circle cx="0" cy="0" r="12" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+        <text x="0" y="-16" fill="rgba(255,255,255,0.2)" font-size="6" text-anchor="middle" font-family="Inter, sans-serif">N</text>
+        <line x1="0" y1="-10" x2="0" y2="10" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+        <line x1="-10" y1="0" x2="10" y2="0" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+      </g>
+
+      <text x="280" y="385" fill="rgba(255,255,255,0.06)" font-size="6" font-family="monospace" text-anchor="end">5.9° N / 102.75° E</text>
+      <text x="15" y="385" fill="rgba(255,255,255,0.04)" font-size="6" font-family="Inter, sans-serif" letter-spacing="2">SOUTH CHINA SEA</text>
+    </svg>
+
+    <div class="watermark">perhentianboat.com</div>
+  </div>
+</div>
+
+<div class="controls">
+  <input type="text" id="nameInput" placeholder="Passenger name" value="Muhammad Ihsan & Family">
+  <input type="text" id="dateInput" placeholder="Date" value="14 May 2026">
+  <select id="routeSelect">
+    <option value="Kuala Besut ➔ Coral Bay">Kuala Besut → Coral Bay</option>
+    <option value="Kuala Besut ➔ Long Beach">Kuala Besut → Long Beach</option>
+    <option value="Kuala Besut ➔ Perhentian Besar">Kuala Besut → Perhentian Besar</option>
+    <option value="Kuala Besut ➔ Mimpi Resort">Kuala Besut → Mimpi Resort</option>
+  </select>
+  <button onclick="updateCard()">🎨 Update</button>
+</div>
+
+<script>
+  function updateCard() {
+    const name = document.getElementById('nameInput').value || 'The Traveler';
+    const date = document.getElementById('dateInput').value || 'May 2026';
+    document.getElementById('logName').textContent = name;
+    document.getElementById('logDate').textContent = date;
+    document.getElementById('logRoute').textContent = document.getElementById('routeSelect').value;
+  }
+</script>
+
+</body>
+</html>

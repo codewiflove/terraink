@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perhentian Journey Map — Premium Topo Poster</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@200;300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    padding: 30px 20px;
+  }
+
+  /* ─── Aspect toggle ─── */
+  .mode-toggle {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    background: #0f1218;
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .mode-btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.3);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .mode-btn.active {
+    background: #c9a84c;
+    color: #0a0a0f;
+  }
+  .mode-btn:hover:not(.active) { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.6); }
+
+  /* ─── Poster container ─── */
+  .poster-wrap {
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .poster-wrap.a4 {
+    width: 595px;
+    min-height: 842px;
+  }
+  .poster-wrap.ig {
+    width: 480px;
+    min-height: 854px; /* 9:16 */
+  }
+
+  .poster {
+    width: 100%;
+    min-height: inherit;
+    background: #0a0a0f;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ─── Map section ─── */
+  .map-section {
+    width: 100%;
+    position: relative;
+    background: #0f1218;
+  }
+  .a4 .map-section { height: 580px; }
+  .ig .map-section { height: 520px; }
+
+  .map-svg { width: 100%; height: 100%; display: block; }
+
+  .map-fade {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 100px;
+    background: linear-gradient(to top, #0a0a0f, transparent);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .brand-top {
+    position: absolute;
+    top: 20px; left: 24px;
+    z-index: 3;
+  }
+  .brand-top .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 10px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .brand-top .logo-dot {
+    display: inline-block;
+    width: 4px; height: 4px;
+    background: #c9a84c;
+    border-radius: 50%;
+    margin: 0 6px;
+    vertical-align: middle;
+  }
+
+  /* ─── Weather badge ─── */
+  .weather-badge {
+    position: absolute;
+    top: 20px; right: 24px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+  .weather-badge .temp {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+  .weather-badge .desc {
+    font-size: 8px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .weather-badge .cond-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+  }
+
+  /* ─── Passport stamp ─── */
+  .passport-stamp {
+    position: absolute;
+    bottom: 24px; right: 20px;
+    z-index: 3;
+    transform: rotate(-8deg);
+    opacity: 0.15;
+    pointer-events: none;
+  }
+  .passport-stamp svg {
+    width: 80px;
+    height: 80px;
+  }
+
+  /* ─── Content section ─── */
+  .content-section {
+    background: #0a0a0f;
+    padding: 28px 36px 32px;
+    position: relative;
+  }
+  .ig .content-section { padding: 22px 28px 28px; }
+
+  .hero-line {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 4px;
+  }
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 40px;
+    line-height: 1;
+    color: #fff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .ig .hero-name { font-size: 32px; }
+  .hero-name .accent { color: #c9a84c; }
+  .hero-year {
+    font-size: 11px;
+    font-weight: 200;
+    color: rgba(255,255,255,0.15);
+    letter-spacing: 4px;
+    white-space: nowrap;
+  }
+  .hero-sub {
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .ig .hero-sub { margin-bottom: 14px; font-size: 10px; }
+
+  /* ─── Metadata grid ─── */
+  .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 1px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 14px;
+  }
+  .ig .meta-grid { grid-template-columns: 1fr 1fr 1fr; }
+  .meta-item {
+    background: #0a0a0f;
+    padding: 12px 14px;
+  }
+  .meta-item .label {
+    font-size: 7px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.25);
+    margin-bottom: 2px;
+    font-weight: 500;
+  }
+  .meta-item .value {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    font-family: 'Inter', sans-serif;
+  }
+  .ig .meta-item .value { font-size: 10px; }
+
+  /* ─── QR Code ─── */
+  .qr-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0 4px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .qr-code svg { width: 40px; height: 40px; display: block; }
+  .qr-text { font-size: 7px; color: rgba(255,255,255,0.2); line-height: 1.4; letter-spacing: 0.5px; }
+  .qr-text strong { color: rgba(255,255,255,0.35); font-weight: 500; }
+
+  /* ─── Footer ─── */
+  .poster-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+  }
+  .poster-footer .left { font-size: 7px; color: rgba(255,255,255,0.2); letter-spacing: 1px; }
+  .poster-footer .right { font-size: 7px; color: rgba(255,255,255,0.15); letter-spacing: 2px; text-transform: uppercase; }
+  .poster-footer .right strong { color: rgba(255,255,255,0.35); font-weight: 500; }
+
+  /* ─── Controls ─── */
+  .controls {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 595px;
+    width: 100%;
+  }
+  .controls-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .controls input, .controls select {
+    padding: 10px 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(8px);
+    color: #e2e8f0;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .controls input:focus, .controls select:focus { border-color: rgba(201,168,76,0.3); }
+  .controls input::placeholder { color: #475569; }
+
+  .controls button {
+    padding: 10px 24px;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.8);
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .controls button:hover { background: rgba(255,255,255,0.1); border-color: rgba(201,168,76,0.2); }
+
+  .btn-primary {
+    background: #c9a84c !important;
+    color: #0a0a0f !important;
+    border: none !important;
+    font-weight: 700 !important;
+  }
+  .btn-primary:hover { background: #d4b85a !important; }
+
+  .btn-download {
+    background: rgba(16,185,129,0.1) !important;
+    border: 1px solid rgba(16,185,129,0.15) !important;
+    color: #10b981 !important;
+  }
+  .btn-download:hover { background: rgba(16,185,129,0.2) !important; }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .poster { box-shadow: none; border-radius: 0; }
+    .controls, .mode-toggle { display: none; }
+  }
+
+  /* Animated route line via CSS */
+  @keyframes dashMove {
+    to { stroke-dashoffset: -100; }
+  }
+  .route-line {
+    stroke-dasharray: 8,6;
+    animation: dashMove 2s linear infinite;
+  }
+</style>
+</head>
+<body>
+
+<!-- Aspect ratio toggle -->
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="setMode('a4')">📄 A4 Poster</button>
+  <button class="mode-btn" onclick="setMode('ig')">📱 IG Story 9:16</button>
+</div>
+
+<div class="poster-wrap a4" id="posterWrap">
+<div class="poster" id="poster">
+  <!-- Map Section -->
+  <div class="map-section">
+    <svg class="map-svg" viewBox="0 0 595 580" xmlns="http://www.w3.org/2000/svg" id="mapSvg">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="softGlow">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <!-- Topo glow for islands -->
+        <filter id="topoGlow">
+          <feGaussianBlur stdDeviation="6" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Background grid -->
+      <g stroke="rgba(255,255,255,0.02)" stroke-width="0.3">
+        <line x1="0" y1="60" x2="595" y2="60"/><line x1="0" y1="120" x2="595" y2="120"/>
+        <line x1="0" y1="180" x2="595" y2="180"/><line x1="0" y1="240" x2="595" y2="240"/>
+        <line x1="0" y1="300" x2="595" y2="300"/><line x1="0" y1="360" x2="595" y2="360"/>
+        <line x1="0" y1="420" x2="595" y2="420"/><line x1="0" y1="480" x2="595" y2="480"/>
+        <line x1="0" y1="540" x2="595" y2="540"/><line x1="75" y1="0" x2="75" y2="580"/>
+        <line x1="150" y1="0" x2="150" y2="580"/><line x1="225" y1="0" x2="225" y2="580"/>
+        <line x1="300" y1="0" x2="300" y2="580"/><line x1="375" y1="0" x2="375" y2="580"/>
+        <line x1="450" y1="0" x2="450" y2="580"/><line x1="525" y1="0" x2="525" y2="580"/>
+      </g>
+
+      <!-- Outer ocean depth contours -->
+      <ellipse cx="340" cy="250" rx="230" ry="200" fill="none" stroke="rgba(201,168,76,0.03)" stroke-width="0.4"/>
+      <ellipse cx="340" cy="250" rx="210" ry="180" fill="none" stroke="rgba(201,168,76,0.04)" stroke-width="0.5"/>
+      <ellipse cx="340" cy="250" rx="195" ry="165" fill="none" stroke="rgba(201,168,76,0.05)" stroke-width="0.5"/>
+      <ellipse cx="340" cy="250" rx="180" ry="150" fill="none" stroke="rgba(201,168,76,0.06)" stroke-width="0.5"/>
+      <ellipse cx="340" cy="250" rx="165" ry="135" fill="none" stroke="rgba(201,168,76,0.07)" stroke-width="0.5"/>
+      <ellipse cx="340" cy="250" rx="150" ry="120" fill="none" stroke="rgba(201,168,76,0.08)" stroke-width="0.5"/>
+      <ellipse cx="340" cy="250" rx="135" ry="105" fill="none" stroke="rgba(201,168,76,0.09)" stroke-width="0.5"/>
+      <ellipse cx="340" cy="250" rx="120" ry="92" fill="none" stroke="rgba(201,168,76,0.1)" stroke-width="0.5"/>
+
+      <!-- Perhentian Besar -->
+      <g filter="url(#topoGlow)" opacity="0.6">
+        <ellipse cx="310" cy="235" rx="72" ry="55" fill="none" stroke="rgba(201,168,76,0.12)" stroke-width="0.6"/>
+        <ellipse cx="310" cy="235" rx="65" ry="49" fill="none" stroke="rgba(201,168,76,0.15)" stroke-width="0.6"/>
+        <ellipse cx="310" cy="235" rx="58" ry="43" fill="none" stroke="rgba(201,168,76,0.18)" stroke-width="0.6"/>
+        <ellipse cx="310" cy="235" rx="52" ry="38" fill="none" stroke="rgba(201,168,76,0.22)" stroke-width="0.6"/>
+        <ellipse cx="310" cy="235" rx="46" ry="33" fill="none" stroke="rgba(201,168,76,0.26)" stroke-width="0.6"/>
+        <ellipse cx="310" cy="235" rx="40" ry="28" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="0.6"/>
+        <ellipse cx="310" cy="235" rx="34" ry="24" fill="none" stroke="rgba(201,168,76,0.35)" stroke-width="0.6"/>
+        <ellipse cx="310" cy="235" rx="28" ry="19" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="0.6"/>
+        <ellipse cx="310" cy="235" rx="22" ry="15" fill="none" stroke="rgba(201,168,76,0.45)" stroke-width="0.6"/>
+        <ellipse cx="310" cy="235" rx="16" ry="11" fill="none" stroke="rgba(201,168,76,0.5)" stroke-width="0.6"/>
+        <ellipse cx="310" cy="235" rx="10" ry="7" fill="rgba(201,168,76,0.06)" stroke="rgba(201,168,76,0.55)" stroke-width="0.6"/>
+      </g>
+
+      <!-- Perhentian Kecil -->
+      <g filter="url(#topoGlow)" opacity="0.6">
+        <ellipse cx="390" cy="190" rx="50" ry="42" fill="none" stroke="rgba(201,168,76,0.12)" stroke-width="0.6"/>
+        <ellipse cx="390" cy="190" rx="44" ry="37" fill="none" stroke="rgba(201,168,76,0.15)" stroke-width="0.6"/>
+        <ellipse cx="390" cy="190" rx="38" ry="32" fill="none" stroke="rgba(201,168,76,0.18)" stroke-width="0.6"/>
+        <ellipse cx="390" cy="190" rx="33" ry="27" fill="none" stroke="rgba(201,168,76,0.22)" stroke-width="0.6"/>
+        <ellipse cx="390" cy="190" rx="28" ry="23" fill="none" stroke="rgba(201,168,76,0.26)" stroke-width="0.6"/>
+        <ellipse cx="390" cy="190" rx="23" ry="19" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="0.6"/>
+        <ellipse cx="390" cy="190" rx="18" ry="15" fill="none" stroke="rgba(201,168,76,0.35)" stroke-width="0.6"/>
+        <ellipse cx="390" cy="190" rx="13" ry="11" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="0.6"/>
+        <ellipse cx="390" cy="190" rx="9" ry="7" fill="rgba(201,168,76,0.06)" stroke="rgba(201,168,76,0.45)" stroke-width="0.6"/>
+      </g>
+
+      <!-- Rock between islands -->
+      <g opacity="0.4">
+        <ellipse cx="355" cy="220" rx="12" ry="9" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+        <ellipse cx="355" cy="220" rx="8" ry="6" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="0.5"/>
+      </g>
+
+      <!-- Island labels -->
+      <text x="310" y="300" fill="rgba(255,255,255,0.15)" font-size="8" font-family="Inter, sans-serif" text-anchor="middle" letter-spacing="3">PERHENTIAN BESAR</text>
+      <text x="390" y="160" fill="rgba(255,255,255,0.15)" font-size="8" font-family="Inter, sans-serif" text-anchor="middle" letter-spacing="3">PERHENTIAN KECIL</text>
+
+      <!-- Mainland coast -->
+      <path d="M 0,480 Q 30,465 70,455 Q 110,445 150,438 Q 190,430 230,425 L 230,580 L 0,580 Z"
+            fill="#141820" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+      <path d="M 0,485 Q 30,470 70,460 Q 110,450 150,443 Q 190,435 230,430" fill="none" stroke="rgba(201,168,76,0.06)" stroke-width="0.4"/>
+      <path d="M 0,490 Q 30,475 70,465 Q 110,455 150,448 Q 190,440 230,435" fill="none" stroke="rgba(201,168,76,0.04)" stroke-width="0.4"/>
+      <text x="100" y="520" fill="rgba(255,255,255,0.06)" font-size="9" font-family="Inter, sans-serif" letter-spacing="6">TERENGGANU COAST</text>
+
+      <!-- Origin: Kuala Besut Jetty -->
+      <g>
+        <circle cx="135" cy="365" r="18" fill="none" stroke="rgba(201,168,76,0.08)" stroke-width="1">
+          <animate attributeName="r" values="18;24;18" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.08;0.02;0.08" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="135" cy="365" r="4" fill="#c9a84c"/>
+        <circle cx="135" cy="365" r="7" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.4"/>
+        <text x="152" y="369" fill="#c9a84c" font-size="9" font-weight="600" font-family="Inter, sans-serif" letter-spacing="1">KUALA BESUT JETTY</text>
+        <text x="152" y="380" fill="rgba(255,255,255,0.15)" font-size="7" font-family="Inter, sans-serif">Departure Point</text>
+      </g>
+
+      <!-- Destination: dynamic -->
+      <g id="destGroup">
+        <circle cx="408" cy="210" r="4" fill="#10b981"/>
+        <circle cx="408" cy="210" r="8" fill="none" stroke="#10b981" stroke-width="1" opacity="0.4"/>
+        <text x="424" y="214" fill="#10b981" font-size="9" font-weight="600" font-family="Inter, sans-serif" letter-spacing="1" id="destLabel">CORAL BAY</text>
+        <text x="424" y="225" fill="rgba(255,255,255,0.15)" font-size="7" font-family="Inter, sans-serif" id="destSub">Perhentian Kecil</text>
+      </g>
+
+      <!-- Route line (animated) -->
+      <g filter="url(#glow)">
+        <path d="M 135,365 Q 200,330 260,295 Q 320,265 370,235 Q 390,222 408,210"
+              fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.8"
+              stroke-dasharray="8,6" class="route-line" id="routeLine"/>
+      </g>
+
+      <!-- Arrow head -->
+      <polygon points="408,210 398,205 401,218" fill="#c9a84c" opacity="0.8" id="arrowHead"/>
+
+      <!-- Waypoints -->
+      <circle cx="200" cy="330" r="1.5" fill="#c9a84c" opacity="0.3"/>
+      <circle cx="260" cy="295" r="1.5" fill="#c9a84c" opacity="0.3"/>
+      <circle cx="320" cy="265" r="1.5" fill="#c9a84c" opacity="0.3"/>
+      <circle cx="370" cy="235" r="1.5" fill="#c9a84c" opacity="0.3"/>
+
+      <!-- Compass Rose -->
+      <g transform="translate(548, 65)" opacity="0.25">
+        <circle cx="0" cy="0" r="16" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+        <text x="0" y="-20" fill="rgba(255,255,255,0.25)" font-size="8" text-anchor="middle" font-family="Inter, sans-serif" font-weight="300">N</text>
+        <line x1="0" y1="-14" x2="0" y2="14" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+        <line x1="-14" y1="0" x2="14" y2="0" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+        <line x1="-8" y1="-8" x2="8" y2="8" stroke="rgba(255,255,255,0.08)" stroke-width="0.3"/>
+        <line x1="8" y1="-8" x2="-8" y2="8" stroke="rgba(255,255,255,0.08)" stroke-width="0.3"/>
+      </g>
+
+      <!-- Legend -->
+      <g transform="translate(30, 530)" opacity="0.2">
+        <line x1="0" y1="0" x2="18" y2="0" stroke="#c9a84c" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="24" y="4" fill="rgba(255,255,255,0.2)" font-size="7" font-family="Inter, sans-serif">— Boat Route</text>
+        <circle cx="0" cy="12" r="2.5" fill="#c9a84c" opacity="0.5"/>
+        <text x="24" y="16" fill="rgba(255,255,255,0.2)" font-size="7" font-family="Inter, sans-serif">● Departure / Arrival</text>
+      </g>
+
+      <!-- Coordinates -->
+      <text x="563" y="560" fill="rgba(255,255,255,0.08)" font-size="7" font-family="monospace" text-anchor="end" id="mapCoords">5.9029° N / 102.7557° E</text>
+
+    </svg>
+
+    <div class="map-fade"></div>
+
+    <!-- Brand -->
+    <div class="brand-top">
+      <div class="logo"><span class="logo-dot"></span> PERHENTIAN GATEWAY</div>
+    </div>
+
+    <!-- Weather badge -->
+    <div class="weather-badge">
+      <div class="cond-dot"></div>
+      <span class="temp" id="weatherTemp">31°C</span>
+      <span class="desc" id="weatherDesc">Sunny • Calm</span>
+    </div>
+
+    <!-- Passport stamp -->
+    <div class="passport-stamp">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="1.5"/>
+        <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.8"/>
+        <text x="50" y="42" fill="rgba(201,168,76,0.3)" font-size="7" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" letter-spacing="1">DEPARTURE</text>
+        <text x="50" y="54" fill="rgba(201,168,76,0.2)" font-size="5" text-anchor="middle" font-family="Inter, sans-serif" letter-spacing="0.5">KUALA BESUT</text>
+        <line x1="20" y1="65" x2="80" y2="65" stroke="rgba(201,168,76,0.15)" stroke-width="0.5"/>
+        <text x="50" y="72" fill="rgba(201,168,76,0.15)" font-size="4" text-anchor="middle" font-family="Inter, sans-serif" letter-spacing="1">✦ 14 MAY ✦</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div class="content-section">
+    <div class="hero-line">
+      <div class="hero-name" id="heroName">THE <span class="accent">AZLAN</span> ADVENTURE</div>
+      <div class="hero-year">'26</div>
+    </div>
+    <div class="hero-sub">Perhentian Islands • Terengganu • Malaysia</div>
+
+    <!-- Metadata Grid -->
+    <div class="meta-grid">
+      <div class="meta-item">
+        <div class="label">Coordinates</div>
+        <div class="value mono" id="metaCoords">5.9100° N, 102.7472° E</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Destination</div>
+        <div class="value" id="metaDest">Perhentian Kecil</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Crossing Date</div>
+        <div class="value" id="metaDate">14 May 2026</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Vessel</div>
+        <div class="value" id="metaVessel">PerhentianBoat Express</div>
+      </div>
+    </div>
+
+    <!-- QR + Footer -->
+    <div class="qr-section">
+      <div class="qr-code">
+        <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="40" height="40" fill="none"/>
+          <!-- Simplified QR-style pattern -->
+          <rect x="2" y="2" width="8" height="8" fill="rgba(201,168,76,0.3)" rx="1"/>
+          <rect x="30" y="2" width="8" height="8" fill="rgba(201,168,76,0.3)" rx="1"/>
+          <rect x="2" y="30" width="8" height="8" fill="rgba(201,168,76,0.3)" rx="1"/>
+          <rect x="10" y="10" width="6" height="6" fill="rgba(201,168,76,0.15)" rx="0.5"/>
+          <rect x="22" y="18" width="6" height="6" fill="rgba(201,168,76,0.15)" rx="0.5"/>
+          <rect x="16" y="28" width="8" height="4" fill="rgba(201,168,76,0.15)" rx="0.5"/>
+          <rect x="14" y="16" width="4" height="8" fill="rgba(201,168,76,0.2)" rx="0.5"/>
+          <rect x="28" y="12" width="4" height="4" fill="rgba(201,168,76,0.2)" rx="0.5"/>
+          <rect x="32" y="22" width="6" height="4" fill="rgba(201,168,76,0.12)" rx="0.5"/>
+          <rect x="6" y="22" width="4" height="6" fill="rgba(201,168,76,0.12)" rx="0.5"/>
+          <rect x="30" y="30" width="8" height="8" fill="rgba(201,168,76,0.3)" rx="1"/>
+          <!-- Center target -->
+          <circle cx="20" cy="20" r="3" fill="rgba(201,168,76,0.1)"/>
+          <circle cx="20" cy="20" r="1.5" fill="rgba(201,168,76,0.2)"/>
+        </svg>
+      </div>
+      <div class="qr-text">Book your own island gateway at <strong>perhentianboat.com</strong></div>
+    </div>
+
+    <div class="poster-footer">
+      <div class="left">✦ Designed exclusively for your journey</div>
+      <div class="right"><strong>perhentianboat.com</strong> ★ 4.9</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <div class="controls-row">
+    <input type="text" id="nameInput" placeholder="YOUR NAME" value="AZLAN">
+    <input type="text" id="dateInput" placeholder="Date" value="14 May 2026">
+    <input type="text" id="vesselInput" placeholder="Vessel" value="PerhentianBoat Express">
+    <select id="destSelect">
+      <option value="Perhentian Kecil">Perhentian Kecil</option>
+      <option value="Perhentian Besar">Perhentian Besar</option>
+      <option value="Long Beach">Long Beach (Perhentian Kecil)</option>
+      <option value="Coral Bay">Coral Bay (Perhentian Kecil)</option>
+      <option value="Mimpi Resort">Mimpi Resort</option>
+      <option value="Marriott Resort">Marriott Resort</option>
+    </select>
+  </div>
+  <div class="controls-row">
+    <button class="btn-primary" onclick="updatePoster()">🎨 Update Poster</button>
+    <button class="btn-download" onclick="downloadPNG()">⬇ Download PNG</button>
+    <button class="btn-primary" onclick="downloadPrint()">🖨 Print PDF</button>
+  </div>
+</div>
+
+<script>
+  let currentMode = 'a4';
+
+  function setMode(mode) {
+    currentMode = mode;
+    const wrap = document.getElementById('posterWrap');
+    wrap.className = 'poster-wrap ' + mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    if (mode === 'a4') document.querySelectorAll('.mode-btn')[0].classList.add('active');
+    else document.querySelectorAll('.mode-btn')[1].classList.add('active');
+  }
+
+  // Destination coordinates map
+  const destCoords = {
+    "Perhentian Kecil":   { cx: 408, cy: 210, label: "CORAL BAY", sub: "Perhentian Kecil", lat: "5.9100° N", lon: "102.7472° E" },
+    "Perhentian Besar":   { cx: 310, cy: 235, label: "PERHENTIAN BESAR", sub: "Resort Area", lat: "5.8930° N", lon: "102.7550° E" },
+    "Long Beach":         { cx: 410, cy: 195, label: "LONG BEACH", sub: "Perhentian Kecil", lat: "5.9150° N", lon: "102.7400° E" },
+    "Coral Bay":          { cx: 420, cy: 215, label: "CORAL BAY", sub: "Teluk Dalam", lat: "5.9070° N", lon: "102.7450° E" },
+    "Mimpi Resort":       { cx: 408, cy: 210, label: "MIMPI RESORT", sub: "Long Beach", lat: "5.9120° N", lon: "102.7420° E" },
+    "Marriott Resort":    { cx: 395, cy: 185, label: "MARRIOTT RESORT", sub: "Perhentian Kecil", lat: "5.9200° N", lon: "102.7350° E" },
+  };
+
+  function updatePoster() {
+    const name = document.getElementById('nameInput').value.toUpperCase().trim() || 'THE TRAVELER';
+    const date = document.getElementById('dateInput').value || 'May 2026';
+    const vessel = document.getElementById('vesselInput').value || 'PerhentianBoat Express';
+    const destKey = document.getElementById('destSelect').value;
+    const dest = destCoords[destKey] || destCoords["Perhentian Kecil"];
+
+    // Update text
+    document.getElementById('heroName').innerHTML = 'THE <span class="accent">' + name + '</span> ADVENTURE';
+    document.getElementById('metaDate').textContent = date;
+    document.getElementById('metaDest').textContent = destKey;
+    document.getElementById('metaVessel').textContent = vessel;
+    document.getElementById('metaCoords').textContent = dest.lat + ', ' + dest.lon;
+
+    // Update map destination position
+    const destLabel = document.getElementById('destLabel');
+    const destSub = document.getElementById('destSub');
+    const destGroup = document.getElementById('destGroup');
+    destLabel.textContent = dest.label;
+    destSub.textContent = dest.sub;
+
+    // Move destination marker & label via SVG
+    const circles = destGroup.querySelectorAll('circle');
+    circles[0].setAttribute('cx', dest.cx);
+    circles[0].setAttribute('cy', dest.cy);
+    circles[1].setAttribute('cx', dest.cx);
+    circles[1].setAttribute('cy', dest.cy);
+    destLabel.setAttribute('x', dest.cx + 16);
+    destLabel.setAttribute('y', dest.cy + 4);
+    destSub.setAttribute('x', dest.cx + 16);
+    destSub.setAttribute('y', dest.cy + 15);
+
+    // Update route line
+    const route = document.getElementById('routeLine');
+    const midX = (135 + dest.cx) / 2;
+    const midY = (365 + dest.cy) / 2 - 20;
+    route.setAttribute('d', `M 135,365 Q ${midX},${midY-20} ${dest.cx},${dest.cy}`);
+
+    // Update arrow
+    const arrow = document.getElementById('arrowHead');
+    arrow.setAttribute('points', `${dest.cx},${dest.cy} ${dest.cx-10},${dest.cy-5} ${dest.cx-7},${dest.cy+8}`);
+
+    // Update map coords
+    document.getElementById('mapCoords').textContent = dest.lat + ' / ' + dest.lon;
+
+    // Trigger route animation restart
+    route.style.animation = 'none';
+    void route.offsetWidth;
+    route.style.animation = 'dashMove 2s linear infinite';
+  }
+
+  function downloadPNG() {
+    const poster = document.getElementById('poster');
+    html2canvas(poster, {
+      scale: 2,
+      backgroundColor: '#0a0a0f',
+      useCORS: true,
+      logging: false,
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'perhentian-journey-' + Date.now() + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  }
+
+  function downloadPrint() {
+    window.print();
+  }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+</body>
+</html>
